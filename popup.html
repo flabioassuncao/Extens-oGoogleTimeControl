@@ -1,0 +1,52 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html ng-app="TimeControlEx">
+  <head>
+    <title>Getting Started Extension's Popup</title>
+    <link rel="stylesheet" type="text/css" href="lib/css/style.css">
+    <!-- <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet"> -->
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+      }
+      #popup {
+        min-width: 450px;
+        width: 300px;
+        min-height: 10px;
+        height: 200px;
+        margin: 12px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    </style>
+
+    <script src="assets/JQuery/jquery.min.js"> </script>
+    <script src="assets/angular.js"></script>
+    <script src="js/app.js"></script>
+    <!-- <script src="assets/bootstrap/js/bootstrap.min.js"></script> -->
+    <script src="assets/angular/angular-local-storage.js"></script>
+    <script src="js/controllers/exController.js"></script>
+    <script src="assets/moment/moment.js"></script>
+    <script src="js/service/activityService.js"></script>
+    <script src="js/service/serialGeneratorService.js"></script>
+    <script src="js/service/timeFilter.js"></script>
+    <script src="js/config/serialGeneratorConfig.js"></script>
+    <script src="js/service/addhourService.js"></script>
+    <script src="js/value/configValue.js"></script>
+    <script src="js/controllers/TimerController.js"></script>
+    <script src="js/controllers/LoginController.js"></script>
+    <script src="popup.js"></script>
+    <script src="assets/angular-route.js"> </script>
+    <script src="js/config/routeConfig.js"></script>
+  </head>
+  <body> 
+      <div id="wrapper" ng-view></div>
+  </body>
+</html>
+

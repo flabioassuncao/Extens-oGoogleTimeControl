@@ -1,0 +1,37 @@
+            <div id="padd" class="main-container">
+				<div class="container">
+					<div class="row">
+						<div class="col-sm-5 login-box">
+							<div class="panel panel-default">
+								<div id="logoTitle" class="panel-intro text-center">
+									<h2 style="text-align: center;" class="logo-title">
+									<span class="logo-icon"><i class="icon icon-clock ln-shadow-logo shape-0"></i> </span> Time<span>Control </span> </h2>
+									<div class="user-email" title="Open TimeControl.com">
+                                        <h6 style="text-align: center;">{{authentication.userName}} <a href="#" ng-click="logOut()">logof</a></h6>
+                                    </div> 
+								</div>
+							</div>
+					</div>
+				</div>
+                    <div class="dtable hw100">
+                        <div class="dtable-cell hw100">
+                                <div  class="row search-row animated animated lightSpeedIn">
+                                    <form name="userForm">
+                                        <div class="col-lg-6 col-sm-6 search-col relative locationicon">
+                                            <i class="icon-location-2 icon-append"></i>
+                                            <input type="text" name="" id="" class="form-control locinput input-rel searchtag-input" placeholder="What are you working on?" ng-model="activity.Link" required style="text-align: -webkit-center;">
+                                            <input  type="text" id="startDate" value="" ng-show="false">
+                                            <input  type="text" id="endDate" value="" ng-show="false">
+                                            <p id="link"></p>
+                                        </div>
+                                        <div class="col-lg-2 col-sm-2 search-col">
+                                            <button id="btnStart" ng-click="createActivity(activity);takeAction();valueStartDate();HideStart()" type="submit" class="btn btn-primary btn-search btn-block" ng-show="!tagInit" ng-disabled="userForm.$invalid"><strong>Start</strong></button>
+                                            <button id="btnStop" style="background: red" ng-show="tagStop" ng-click="takeAction();updateActivity(activity);HideStart()" type="submit" class="btn btn-primary btn-search btn-block" ng-disabled="userForm.$invalid"><strong>Stop</strong></button> &nbsp &nbsp &nbsp &nbsp
+                                            <span id="tempo" style="text-align: center;" class="cat-title"><strong>{{counter|formatTimer}}</strong></span>
+                                        </div>
+                                    </form>
+                                </div>
+                        </div>
+                    </div>
+
+			

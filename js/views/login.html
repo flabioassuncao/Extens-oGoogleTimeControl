@@ -1,0 +1,39 @@
+			<div class="main-container">
+				<div class="container">
+					<div class="row">
+						<div class="col-sm-5 login-box">
+							<div class="panel panel-default">
+								<div class="panel-intro text-center">
+									<h2 id="titleLogin" class="logo-title">
+									<span class="logo-icon"><i class="icon icon-clock ln-shadow-logo shape-0"></i> </span> Time<span>Control </span> </h2>
+								</div>
+								<div class="panel-body">
+									<form class="form-horizontal" role="form">
+										<div asp-validation-summary="ValidationSummary.All" class="text-danger"></div>
+										<div class="form-group">
+											<div class="input-icon"> <i class="icon-user fa"></i>
+												<input ng-model="loginData.Email" type="text" placeholder="Username" required class="form-control email">
+											</div>
+										</div>
+										<br />
+										<div class="form-group">
+											<div class="input-icon"> <i class="icon-lock fa"></i>
+												<input ng-model="loginData.Password" type="password" class="form-control" required placeholder="Password" id="user-pass">
+											</div>
+										</div>
+										<br />
+										<div class="form-group">
+											<button ng-click="login(loginData)"  class="btn btn-primary  btn-block">Log in</button>
+										</div>
+										<div style="text-align: center; color: red;" ng-hide="alert" class="alert alert-danger"><strong>{{message}}</strong> </div>                         
+									</form>
+								</div>
+								<div class="panel-footer">
+									<div class="checkbox pull-left">
+									</div>
+									<p id="currentLink">Loading ...</p>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
