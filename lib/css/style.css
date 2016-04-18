@@ -2601,7 +2601,7 @@ nav.slider-nav a.next {
   }
 
   #btnStart, #btnStop {
-  	padding: 1px 40px; 
+  	padding: 1px 105px;
   }
 
   #titleLogin{
@@ -2610,4 +2610,20 @@ nav.slider-nav a.next {
   	padding-top: 15px;
   }
 
+  #divMsgErroLogin{
+  	text-align: center; 
+  	color: red;
+  }
+
+  #logoTitle, #userLog, #tempo{
+  	text-align: center;
+  }
+
+  #activityLink{
+  	text-align: -webkit-center;
+  }
+
+  #btnStop{
+  	background: red;
+  }
 }

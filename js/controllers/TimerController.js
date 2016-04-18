@@ -1,7 +1,9 @@
-myApp.controller("TimerController", function ($scope, activitySer, serialGenerator, addHour, $timeout, localStorageService) {
+myApp.controller("TimerController", function ($scope, activitySer, addHour, $timeout, localStorageService) {
 
 	$scope.timeTotal;
 	$scope.counter = 0;
+    var teste;
+    $scope.Duration = "00H 00M 00S";
 
 	$scope.timeTotal = function(){
         var total = "00:00:00";
@@ -28,7 +30,7 @@ myApp.controller("TimerController", function ($scope, activitySer, serialGenerat
             $timeout.cancel(mytimeout);
              $scope.tagStart = true;
              $scope.tagStop = false;
-             document.getElementById('endDate').value = moment().format();
+             $scope.EndDate = moment().format();
              
         }
         else
@@ -55,23 +57,30 @@ myApp.controller("TimerController", function ($scope, activitySer, serialGenerat
 		activitySer.logOut();
 	}
 
-	$scope.createActivity = function(activity){
-        
-        activity.activityId = serialGenerator.generate();
-        activity.Responsible = activitySer.authenticationUser.userName;
-        console.log(activity);
-        activitySer.saveActivity(activity).success(function (data) {
-			var time = {};
-                time.TimeId = serialGenerator.generate();
-                time.StartDate = document.getElementById('startDate').value;
-                time.ActivityId = activity.activityId;
-                activitySer.saveTime(time);
-		});
-        
+	$scope.createActivity = function(activityLink){
+
+        if(activityLink){
+            var activity = {};
+            activity.Link = $scope.activityLink;
+            activity.Responsible = activitySer.authenticationUser.userName;
+            activitySer.saveActivity(activity).success(function (data) {
+                var time = {};
+                    time.StartDate = $scope.StartDate;
+                    time.ActivityTime = "00:00:00";
+                    time.ActivityId = data.ActivityId;
+                    activitySer.saveTime(time);
+            });
+        }
+    }
+
+    $scope.linkPage = function () {
+        chrome.tabs.getSelected(null,function(tab) {
+            document.getElementById('activityLink').value = tab.url;
+        });
     }
 
     $scope.valueStartDate = function (){
-        document.getElementById('startDate').value = moment().format();
+        $scope.StartDate = moment().format(); 
     }
 
     $scope.HideStart = function(){
@@ -90,20 +99,14 @@ myApp.controller("TimerController", function ($scope, activitySer, serialGenerat
 
     $scope.updateActivity = function(activity)
     {
-          activity.activityId = activitySer.recuperarIdActivity();
+          activity.ActivityId = activitySer.recuperarIdActivity();
           activity.Responsible = activitySer.authenticationUser.userName;
-          activity.Status = true;
-          activity.StartDate = document.getElementById('startDate').value;
-          activity.EndDate = document.getElementById('endDate').value;
-          var tempo = document.getElementById('tempo').innerText;
-          tempo = tempo.replace("H ", ":");
-          tempo = tempo.replace("M ", ":");
-          tempo = tempo.replace("S", "");
-          activity.Time = tempo 
+          
           activitySer.updateActivity(activity).success(function (data) {
             updateTime();  
 			delete $scope.activity;
-            document.getElementById('tempo').innerText  = '00H 00M 00S';
+            delete $scope.activityLink;
+            $scope.Duration = '00H 00M 00S';
             $scope.counter = 0;
 		});
             
@@ -130,84 +133,62 @@ myApp.controller("TimerController", function ($scope, activitySer, serialGenerat
     var updateTime = function () {
         var time = {};
         time.TimeId = activitySer.recuperarIdTime();
-        time.StartDate = document.getElementById('startDate').value;
-        time.EndDate = document.getElementById('endDate').value;
+        time.StartDate = $scope.StartDate;
+        time.EndDate = $scope.EndDate;
         var dt1 = moment(time.StartDate, "YYYY/MM/DD hh:mm:ss");
         var dt2 = moment(time.EndDate, "YYYY/MM/DD hh:mm:ss");
-        // time.ActivityTime = dt2.diff(dt1, 'seconds');
         time.ActivityTime = converterSegundos(dt2.diff(dt1, 'seconds'));
         time.status = true;
         activitySer.updateTime(time);
         
     }
 
-    var continuarActivity = function() {
-        var idData = localStorageService.get('continueActivity');
-        if(idData != null){
-            $scope.activity = idData;
-            
-            
-            var time = {};
-            time.TimeId = serialGenerator.generate();
-            time.StartDate = moment().format();
-            time.ActivityId = activitySer.recuperarIdActivity();;
-            activitySer.saveTime(time); 
-            document.getElementById('startDate').value = moment().format();
-                
-            $scope.tagInit = true;
-            $scope.tagStop = true;
-            $scope.stopped = false;
-        }
-    }
-
     var atividadeAberta = function (){
-        activitySer.getActivity().success(function (data) {
-			var objts = data;
-            var resul;
-            var timer;
-            var item
-            // console.log(objts.length);
-            var authData = localStorageService.get('authorizationData');
-                // console.log(authData.userName);
-            for(item in objts){
-                for(var teste in objts[item].Times){
-                    if(objts[item].Times[teste].status == false && objts[item].Responsible == authData.userName){ //add user
-                        timer = objts[item].Times[teste];
-                        resul = objts[item];
+        var user = activitySer.authenticationUser.userName;
+        if(user){
+            activitySer.getActivity().success(function (data) {
+    			var objts = data, resul, timer, item;
+                var authData = localStorageService.get('authorizationData');
+                for(item in objts){
+                    for(var teste in objts[item].Times){
+                        if(objts[item].Times[teste].Status == false && objts[item].Responsible == authData.userName){ //add user
+                            timer = objts[item].Times[teste];
+                            resul = objts[item];
+                        }
                     }
                 }
-            }
-            
-            if(resul){
-                console.log(timer.ActivityTime);
-                $scope.activity = resul;
-                var dt1 = moment(timer.StartDate, "YYYY/MM/DD hh:mm:ss");
-                var dt2 = moment(moment().format(), "YYYY/MM/DD hh:mm:ss");
-                var diferenca = dt2.diff(dt1, 'seconds');
-                var x = moment.duration(diferenca,'seconds')
-                var h = x.hours().toString().length == 2? x.hours() : ("0" + x.hours());
-                var m = x.minutes().toString().length == 2? x.minutes() : ("0" + x.minutes());
-                var s = x.seconds().toString().length == 2? x.seconds() : ("0" + x.seconds());
-                document.getElementById('tempo').innerText  = h + "H " + m + "M " + s + "S";
-                $scope.counter = diferenca;
-                $scope.tagInit = true;
-                $scope.tagStop = true;
-                $scope.stopped = false;
-                document.getElementById('startDate').value = timer.StartDate;
-                localStorageService.set('idActivityData', { idActivity: resul.activityId});
-                localStorageService.set('idTimeData', { idTime: timer.TimeId});
                 
-            }else{
-                console.log("sem reg");
-            }
-		}).error(function (data, status) {
-			
-		});
+                if(resul){
+                    $scope.activity = resul;
+                    $scope.activityLink = resul.Link;
+                    var dt1 = moment(timer.StartDate, "YYYY/MM/DD hh:mm:ss");
+                    var dt2 = moment(moment().format(), "YYYY/MM/DD hh:mm:ss");
+                    var diferenca = dt2.diff(dt1, 'seconds');
+                    var x = moment.duration(diferenca,'seconds')
+                    var h = x.hours().toString().length == 2? x.hours() : ("0" + x.hours());
+                    var m = x.minutes().toString().length == 2? x.minutes() : ("0" + x.minutes());
+                    var s = x.seconds().toString().length == 2? x.seconds() : ("0" + x.seconds());
+                    $scope.counter = diferenca;
+                    $scope.tagInit = true;
+                    $scope.tagStop = true;
+                    $scope.stopped = false;
+                    $scope.StartDate = timer.StartDate;
+                    localStorageService.set('idActivityData', { idActivity: resul.ActivityId});
+                    localStorageService.set('idTimeData', { idTime: timer.TimeId});
+                    
+                }else{
+                    chrome.tabs.getSelected(null,function(tab) {
+                        $scope.activityLink =  tab.url;
+                    });
+                }
+    		}).error(function (data, status) {
+    			
+    		});
+        }
     }
 
 	$scope.authentication = activitySer.authenticationUser;
 
 	Authentication();
-	// continuarActivity();
     atividadeAberta();
 });

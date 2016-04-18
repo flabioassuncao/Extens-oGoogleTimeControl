@@ -25,7 +25,6 @@ myApp.factory("activitySer", function ($http, config, $q, localStorageService, $
 
 		var authen = localStorageService.get('authorizationData');
 
-
 		_authenticationUser.isAuth = false;
 		_authenticationUser.userName = "";
 		_authenticationUser.useRefreshTokens = false;
@@ -43,7 +42,7 @@ myApp.factory("activitySer", function ($http, config, $q, localStorageService, $
 
     var _saveActivity = function (activity) {
 		return $http.post(config.baseUrl + "/Activity", activity).success(function (response) {
-                localStorageService.set('idActivityData', { idActivity: activity.activityId});
+                localStorageService.set('idActivityData', { idActivity: response.activityId});
         }).error(function (err, status) {
            
         });
